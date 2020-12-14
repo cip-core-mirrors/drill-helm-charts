@@ -1,19 +1,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: {{.Values.global.namespace}}
   name: {{.Values.drill.id}}-drillbit
 spec:
-  serviceName: drill-service
+  serviceName: {{ .Values.drill.id }}-service
   replicas: {{.Values.drill.count}}
   podManagementPolicy: Parallel
   selector: 
     matchLabels: 
-      app: drill-app
+      app: {{ .Values.drill.id }}-app
   template:
     metadata:
       labels:
-        app: drill-app
+        app: {{ .Values.drill.id }}-app
     spec:
       affinity:
         podAntiAffinity:
@@ -23,11 +22,11 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - drill-app
+                      - {{ .Values.drill.id }}-app
               topologyKey: "kubernetes.io/hostname"
-      serviceAccountName: drill-sa
+      serviceAccountName: {{ .Values.drill.id }}-sa
       containers:
-        - name: drill-pod
+        - name: {{ .Values.drill.id }}-pod
           imagePullPolicy: Always
           image: {{.Values.drill.image}}
           ports:
@@ -82,20 +81,20 @@ spec:
           {{- if .Values.drill.drillConf.override }}
           volumeMounts:
             - mountPath: /opt/drill/conf/drill-override.conf
-              name: drill-config-cm
+              name: {{ .Values.drill.id }}-config-cm
               subPath: drill-override.conf
             - mountPath: /opt/drill/conf/drill-env.sh
-              name: drill-config-cm
+              name: {{ .Values.drill.id }}-config-cm
               subPath: drill-env.sh
           {{ end }}
       terminationGracePeriodSeconds: {{ .Values.drill.terminationGracePeriodSeconds }}
       {{- if .Values.drill.drillConf.override }}
       volumes:
-        - name: drill-config-cm
+        - name: {{ .Values.drill.id }}-config-cm
           configMap:
-            name: drill-config-cm
+            name: {{ .Values.drill.id }}-config-cm
       {{ end }}
       initContainers:
         - name: zk-available
           image: busybox
-          command: ['sh', '-c', 'until nc -z zk-service 2181; do echo Waiting for ZK to come up; sleep 5; done; ']
+          command: ['sh', '-c', 'until nc -z {{.Values.zookeeper.hostname}} {{.Values.zookeeper.port}}; do echo Waiting for ZK to come up; sleep 5; done; ']

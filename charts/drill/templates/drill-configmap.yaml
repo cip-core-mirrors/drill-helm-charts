@@ -1,0 +1,11 @@
+{{- if .Values.drill.drillConf.override }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.drill.id }}-config-cm
+data:
+{{- range $filename, $contents := .Values.drill.drillConf.entries }}
+  {{ $filename }}: |-
+    {{- $contents | nindent 4 }}
+{{- end }}
+{{- end }}
