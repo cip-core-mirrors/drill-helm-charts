@@ -87,6 +87,8 @@ drill:
     # Target CPU Utilization Percentage
     cpuThreshold: 75
 
+  resources: {}
+
 ingress:
   enabled: false
   annotations: {}

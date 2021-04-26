@@ -78,6 +78,10 @@ spec:
                   {{- range .Values.drill.lifecycle.preStop.exec.command }}
                   - {{ . | quote }}
                   {{- end }}
+{{- with .Values.drill.resources }}
+          resources: 
+{{ toYaml . | indent 12 }}
+{{- end }}
           {{- if .Values.drill.drillConf.override }}
           volumeMounts:
             - mountPath: /opt/drill/conf/drill-override.conf
