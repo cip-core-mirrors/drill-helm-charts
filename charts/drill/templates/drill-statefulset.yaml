@@ -47,6 +47,8 @@ spec:
               value: {{.Values.drill.id}}
             - name: DRILL_MAX_MEMORY
               value: {{.Values.drill.memory}}
+            - name: DRILL_MAX_DIRECT_MEMORY
+              value: {{.Values.drill.memory}}
             - name: DRILL_HTTP_PORT
               value: "{{.Values.drill.httpPort}}"
             - name: DRILL_USER_SERVER_PORT
